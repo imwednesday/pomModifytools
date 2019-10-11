@@ -9,10 +9,8 @@ import time
 def getPath():
     global strTag
     strTag = input('请输入标记:')
-    # strTag = 'A2RE'
     global f1path
     f1path = input('请输入地址:')
-    # f1path = 'E:/source/thinkwin-cr/branches/A2reactor-4.7.7'
 
     # 将path路径下的所有文件名存入列表moduleDirList
     global moduleDirList
