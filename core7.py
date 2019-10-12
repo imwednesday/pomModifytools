@@ -17,8 +17,9 @@ def getPath():
     # 将path路径下的所有文件名存入列表moduleDirList
     global moduleDirList
     moduleDirList = os.listdir(f1path)
+    # 注释次行即可修改3rd版本,
     moduleDirList.remove('thinkwin-3rd-parent')
-    # 将每个模块加上artifactId标签
+    # 将每个模块加上artifactId标签,以保证字符串对比准确
     global artifactIdList
     artifactIdList = []
 
@@ -59,11 +60,12 @@ def getRightVersionStr(absPomList):
                         if '-' in k:  # 区分对新增模块与已有模块的处理
                             # 如果是已有模块,已经有了标记,需判断标记的长度
                             versionL = len(k[:-10].split('-')[1])
-                            versionM = k[:-(10+versionL)] + strTag + '</version>'
-                            versionDict[moduleName] = versionM  # 添加元素到dict
+                            version = k[:-(10 + versionL)] + strTag + '</version>'
+                            versionDict[moduleName] = version  # 添加元素到dict
                         else:
-                            versionM = k[:-10] + '-' + strTag + '</version>'
-                            versionDict[moduleName] = versionM  # 添加元素到dict
+                            version = k[:-10] + '-' + strTag + '</version>'
+                            versionDict[moduleName] = version  # 添加元素到dict
+
         fread.close()
 
     return versionDict
@@ -71,45 +73,40 @@ def getRightVersionStr(absPomList):
 
 # 修改pom
 def goEditPom(absPomList, versionDict):
-    version = ''
-    moduleName = ''
-    pageListW = []
 
     for fileAbsPom in absPomList:  # 依次修改pom
         pageListR = []
         fread = open(fileAbsPom, 'r', encoding="utf-8")  # 一个读
-        lines = fread.readlines()  # 按行读取内容
 
+        lines = fread.readlines()  # 按行读取内容记录到list
         for currentLine in lines:
             pageListR.append(currentLine)
-        popIndexList = []  #记录需要删除的位置,最后删除,不然会错行
+        fread.close()
+
+        popIndexList = []  # 元素错行处理
+
         for index, line in enumerate(lines):
             if line.expandtabs().replace(' ', '') == '\n':
                 popIndexList.append(index)
                 print(fileAbsPom, ':', index + 1, '是空行,已删除!')
-                continue
             elif line.split()[0] in artifactIdList:  # 如果是目标行,进行修改
                 moduleName = line.split()[0][12:-13]  # 字符串截取模块名
-                # print(moduleName)
                 version = versionDict[moduleName]  # 根据dict取出版本号
+                # 分情况修改指定行,即list内容
                 if moduleName in fileAbsPom.split('\\'):  # 自身模块 处理
                     pageListR[index + 1] = '\t' + version + '\n'
                 elif moduleName == 'thinkwin-3rd-parent' or moduleName == 'thinkwin-parent':
                     pageListR[index + 1] = '\t\t' + version + '\n'
-                else:
-                    # 修改指定行,即list内容
+                else:  # 依赖模块处理
                     pageListR[index + 1] = '\t\t\t' + version + '\n'
 
-
-        for index in popIndexList:
-            pageListR.pop(index - popIndexList.index(index))  #元素错行处理
+        for k in popIndexList:
+            pageListR.pop(index - popIndexList.index(k))  # 元素错行处理
 
         fwrite = open(fileAbsPom, 'w', encoding="utf-8")  # 一个写
-
         for line in pageListR:
             fwrite.write(line)
-
-        fread.close()
+        time.sleep(0.001)
         fwrite.close()
 
 
