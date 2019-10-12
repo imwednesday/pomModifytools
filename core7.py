@@ -17,7 +17,7 @@ def getPath():
     # 将path路径下的所有文件名存入列表moduleDirList
     global moduleDirList
     moduleDirList = os.listdir(f1path)
-    # moduleDirList.remove('thinkwin-3rd-parent')
+    moduleDirList.remove('thinkwin-3rd-parent')
     # 将每个模块加上artifactId标签
     global artifactIdList
     artifactIdList = []
