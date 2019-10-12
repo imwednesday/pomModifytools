@@ -4,6 +4,8 @@ import os
 import time
 # 对函数进行优化,提取重复部分,待处理
 # 增加对空行处理,提高可用性 √
+# 可根据原标记长度自动截取,不限制原标记及新标记长度 √
+# 如果修改3rd 优化修改在本模块的tab长度 √
 
 
 def getPath():
@@ -15,7 +17,7 @@ def getPath():
     # 将path路径下的所有文件名存入列表moduleDirList
     global moduleDirList
     moduleDirList = os.listdir(f1path)
-    moduleDirList.remove('thinkwin-3rd-parent')
+    # moduleDirList.remove('thinkwin-3rd-parent')
     # 将每个模块加上artifactId标签
     global artifactIdList
     artifactIdList = []
@@ -55,8 +57,9 @@ def getRightVersionStr(absPomList):
                         # 可以在这里添加标记
                         k = ''.join(lines[index + 1].split())
                         if '-' in k:  # 区分对新增模块与已有模块的处理
-
-                            versionM = k[:-14] + strTag + '</version>'
+                            # 如果是已有模块,已经有了标记,需判断标记的长度
+                            versionL = len(k[:-10].split('-')[1])
+                            versionM = k[:-(10+versionL)] + strTag + '</version>'
                             versionDict[moduleName] = versionM  # 添加元素到dict
                         else:
                             versionM = k[:-10] + '-' + strTag + '</version>'
@@ -89,13 +92,14 @@ def goEditPom(absPomList, versionDict):
                 moduleName = line.split()[0][12:-13]  # 字符串截取模块名
                 # print(moduleName)
                 version = versionDict[moduleName]  # 根据dict取出版本号
-                if moduleName == 'thinkdwin-3rd-parent' or moduleName == 'thinkwin-parent':
+                if moduleName in fileAbsPom.split('\\'):  # 自身模块 处理
+                    pageListR[index + 1] = '\t' + version + '\n'
+                elif moduleName == 'thinkwin-3rd-parent' or moduleName == 'thinkwin-parent':
                     pageListR[index + 1] = '\t\t' + version + '\n'
-                elif not moduleName in fileAbsPom.split('\\'):  # 自身模块 处理
+                else:
                     # 修改指定行,即list内容
                     pageListR[index + 1] = '\t\t\t' + version + '\n'
-                else:
-                    pageListR[index + 1] = '\t' + version + '\n'
+
 
         for index in popIndexList:
             pageListR.pop(index - popIndexList.index(index))  #元素错行处理
