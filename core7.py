@@ -6,6 +6,7 @@ import time
 # 增加对空行处理,提高可用性 √
 # 可根据原标记长度自动截取,不限制原标记及新标记长度 √
 # 如果修改3rd 优化修改在本模块的tab长度 √
+# 删除模块时,将'-'改为':'
 
 
 def getPath():
@@ -17,8 +18,9 @@ def getPath():
     # 将path路径下的所有文件名存入列表moduleDirList
     global moduleDirList
     moduleDirList = os.listdir(f1path)
-    # 注释次行即可修改3rd版本,
-    moduleDirList.remove('thinkwin-3rd-parent')
+    # 注释此处即可修改3rd版本,
+    if 'thinkwin-3rd-parent' in moduleDirList:
+        moduleDirList.remove('thinkwin-3rd-parent')
     # 将每个模块加上artifactId标签,以保证字符串对比准确
     global artifactIdList
     artifactIdList = []
@@ -62,6 +64,9 @@ def getRightVersionStr(absPomList):
                             versionL = len(k[:-10].split('-')[1])
                             version = k[:-(10 + versionL)] + strTag + '</version>'
                             versionDict[moduleName] = version  # 添加元素到dict
+                        elif ':' in k:  # 删除模块准备
+                            version = k.split(':')[0] + '</version>'
+                            versionDict[moduleName] = version  # 添加元素到dict
                         else:
                             version = k[:-10] + '-' + strTag + '</version>'
                             versionDict[moduleName] = version  # 添加元素到dict
@@ -101,7 +106,7 @@ def goEditPom(absPomList, versionDict):
                     pageListR[index + 1] = '\t\t\t' + version + '\n'
 
         for k in popIndexList:
-            pageListR.pop(index - popIndexList.index(k))  # 元素错行处理
+            pageListR.pop(k - popIndexList.index(k))  # 元素错行处理
 
         fwrite = open(fileAbsPom, 'w', encoding="utf-8")  # 一个写
         for line in pageListR:
