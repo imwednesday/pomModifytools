@@ -7,6 +7,7 @@ import time
 # 可根据原标记长度自动截取,不限制原标记及新标记长度 √
 # 如果修改3rd 优化修改在本模块的tab长度 √
 # 删除模块时,将'-'改为':'
+# 对文本内容非utf-8编码的文件,不支持
 
 
 def getPath():
@@ -51,6 +52,7 @@ def getRightVersionStr(absPomList):
 
     for fileAbsPom in absPomList:
         fread = open(fileAbsPom, 'r', encoding="utf-8")  # 读写方式打开
+        print(fileAbsPom)
         lines = fread.readlines()  # 按行读取内容
 
         for moduleName in moduleDirList:
