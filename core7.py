@@ -3,11 +3,8 @@
 import os
 import time
 # 对函数进行优化,提取重复部分,待处理
-# 增加对空行处理,提高可用性 √
-# 可根据原标记长度自动截取,不限制原标记及新标记长度 √
-# 如果修改3rd 优化修改在本模块的tab长度 √
 # 删除模块时,将'-'改为':'
-# 对文本内容非utf-8编码的文件,不支持
+# 对文本内容非utf-8编码的文件,暂不支持
 
 
 def getPath():
@@ -38,7 +35,7 @@ def getAbsPom(path):
     for fileName in moduleDirList:
         fileAbsName = os.path.join(scpath, fileName)  # 转换为路径
         if os.path.isdir(fileAbsName):  # 如果当前仍然是目录
-            dirName = os.listdir(fileAbsName)  # 遍历目录 fileAbsName,我知道下一层就有pom
+            dirName = os.listdir(fileAbsName)  # 下一层必然有pom,代码就是为了修改它
             for k in dirName:
                 if (k == 'pom.xml'):  # 生成pom的绝对路径
                     absPomList.append(os.path.join(fileAbsName, k))
@@ -51,9 +48,8 @@ def getRightVersionStr(absPomList):
     versionDict = {}
 
     for fileAbsPom in absPomList:
-        fread = open(fileAbsPom, 'r', encoding="utf-8")  # 读写方式打开
-        print(fileAbsPom)
-        lines = fread.readlines()  # 按行读取内容
+        # 按行读取内容
+        lines = fileRead(fileAbsPom)
 
         for moduleName in moduleDirList:
             if moduleName in fileAbsPom.split('\\'):  # 读取自身pom,获取版本号
@@ -64,7 +60,8 @@ def getRightVersionStr(absPomList):
                         if '-' in k:  # 区分对新增模块与已有模块的处理
                             # 如果是已有模块,已经有了标记,需判断标记的长度
                             versionL = len(k[:-10].split('-')[1])
-                            version = k[:-(10 + versionL)] + strTag + '</version>'
+                            version = k[:-(10 +
+                                           versionL)] + strTag + '</version>'
                             versionDict[moduleName] = version  # 添加元素到dict
                         elif ':' in k:  # 删除模块准备
                             version = k.split(':')[0] + '</version>'
@@ -72,24 +69,33 @@ def getRightVersionStr(absPomList):
                         else:
                             version = k[:-10] + '-' + strTag + '</version>'
                             versionDict[moduleName] = version  # 添加元素到dict
-
-        fread.close()
-
     return versionDict
+
+
+# 读文件方法
+def fileRead(fileName):
+    fread = open(fileName, 'r', encoding="utf-8")  # 读
+    lines = ''
+    try:
+        lines = fread.readlines()  # 按行读取内容
+    except UnicodeDecodeError:
+        print(fileName, '不是uft-8编码')
+    finally:
+        fread.close()
+    return lines
 
 
 # 修改pom
 def goEditPom(absPomList, versionDict):
-
+    # 读取文件生成的list与写入文件的list是否改造成一个,就不会有元素错行了?
     for fileAbsPom in absPomList:  # 依次修改pom
-        pageListR = []
-        fread = open(fileAbsPom, 'r', encoding="utf-8")  # 一个读
-
-        lines = fread.readlines()  # 按行读取内容记录到list
+        
+        # 读取文件的list
+        lines = fileRead(fileAbsPom)
         for currentLine in lines:
             pageListR.append(currentLine)
-        fread.close()
-
+        # 写入文件的list
+        pageListR = []
         popIndexList = []  # 元素错行处理
 
         for index, line in enumerate(lines):
