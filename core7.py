@@ -92,10 +92,10 @@ def goEditPom(absPomList, versionDict):
         
         # 读取文件的list
         lines = fileRead(fileAbsPom)
+        pageListR = []
         for currentLine in lines:
             pageListR.append(currentLine)
         # 写入文件的list
-        pageListR = []
         popIndexList = []  # 元素错行处理
 
         for index, line in enumerate(lines):
