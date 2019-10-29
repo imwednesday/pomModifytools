@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import os
 import time
-# 对函数进行优化,提取重复部分,待处理
 # 删除模块时,将'-'改为':'
 # 对文本内容非utf-8编码的文件,暂不支持
 
@@ -79,7 +78,10 @@ def fileRead(fileName):
     try:
         lines = fread.readlines()  # 按行读取内容
     except UnicodeDecodeError:
-        print(fileName, '不是uft-8编码')
+        logName = f1path + '\\' + 'e.log'
+        with open(logName, 'a+', encoding="utf-8") as fwlog:  # 追加
+            fwlog.write(fileName + '不是uft-8编码' + '\n')
+            fwlog.close()
     finally:
         fread.close()
     return lines
@@ -89,9 +91,11 @@ def fileRead(fileName):
 def goEditPom(absPomList, versionDict):
     # 读取文件生成的list与写入文件的list是否改造成一个,就不会有元素错行了?
     for fileAbsPom in absPomList:  # 依次修改pom
-        
+
         # 读取文件的list
         lines = fileRead(fileAbsPom)
+        if lines == []:  # 异常文本处理
+            continue
         pageListR = []
         for currentLine in lines:
             pageListR.append(currentLine)
@@ -104,7 +108,10 @@ def goEditPom(absPomList, versionDict):
                 print(fileAbsPom, ':', index + 1, '是空行,已删除!')
             elif line.split()[0] in artifactIdList:  # 如果是目标行,进行修改
                 moduleName = line.split()[0][12:-13]  # 字符串截取模块名
-                version = versionDict[moduleName]  # 根据dict取出版本号
+                if moduleName in versionDict:  # 异常文本处理
+                    version = versionDict[moduleName]  # 根据dict取出版本号
+                else:
+                    continue
                 # 分情况修改指定行,即list内容
                 if moduleName in fileAbsPom.split('\\'):  # 自身模块 处理
                     pageListR[index + 1] = '\t' + version + '\n'
@@ -116,6 +123,8 @@ def goEditPom(absPomList, versionDict):
         for k in popIndexList:
             pageListR.pop(k - popIndexList.index(k))  # 元素错行处理
 
+        if pageListR == []:  # 异常文本不修改
+            continue
         fwrite = open(fileAbsPom, 'w', encoding="utf-8")  # 一个写
         for line in pageListR:
             fwrite.write(line)
@@ -133,7 +142,11 @@ def doWorkPom():
     versionDict = getRightVersionStr(absPomList)
     # 修改pom
     goEditPom(absPomList, versionDict)
-    print('POM HAS MODIFY SUCCESSFULLY!')
+    exceptionLog = f1path + '//' + 'e.log'
+    if os.path.isfile(exceptionLog):
+        print('POM HAS MODIFY ALMOST SUCCESSFUL! , PLEASE OPEN e.log')
+    else:
+        print('POM HAS MODIFY SUCCESSFULLY!')
     time.sleep(7)
 
 
