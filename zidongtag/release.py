@@ -7,8 +7,6 @@
 @Version :   1.0
 '''
 
-# here put the import lib
-
 import os
 import subprocess
 import time

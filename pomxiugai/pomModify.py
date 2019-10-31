@@ -2,12 +2,10 @@
 # -*- encoding: utf-8 -*-
 '''
 @File    :   pomModify.py
-@Time    :   2019/10/31 17:21:32
+@Time    :   2019/10/31 17:24:54
 @Author  :   imwednesday 
 @Version :   1.0
 '''
-
-# here put the import lib
 
 import os
 import time
