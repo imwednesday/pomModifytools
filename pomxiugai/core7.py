@@ -128,7 +128,7 @@ def goEditPom(absPomList, versionDict):
         fwrite = open(fileAbsPom, 'w', encoding="utf-8")  # 一个写
         for line in pageListR:
             fwrite.write(line)
-        time.sleep(0.001)
+            time.sleep(0.001)
         fwrite.close()
 
 
