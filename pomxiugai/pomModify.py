@@ -1,5 +1,14 @@
-# !/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@File    :   pomModify.py
+@Time    :   2019/10/31 17:21:32
+@Author  :   imwednesday 
+@Version :   1.0
+'''
+
+# here put the import lib
+
 import os
 import time
 # 删除模块时,将'-'改为':'

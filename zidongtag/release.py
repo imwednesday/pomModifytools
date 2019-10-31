@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@File    :   release.py
+@Time    :   2019/10/31 17:21:05
+@Author  :   imwednesday 
+@Version :   1.0
+'''
+
+# here put the import lib
+
 import os
 import subprocess
 import time
