@@ -40,7 +40,7 @@ def fileRead(fileName):
     fread = open(fileName, 'r', encoding="utf-8")  # 一个读
     lines = fread.readlines()  # 按行读取内容
     strSonar = fileName.split(".")[1]
-    if strSonar != "properties":
+    if strSonar == "properties":
         fread.close()
         return lines
     lines = popIndexList(lines)
@@ -106,16 +106,13 @@ def sonarEdit(lines):
 def mavenAndsvn(pomDir):
     p = os.path.dirname(pomDir)  # 将字符串转换为路径
 
-    mvnLog = " >> C:\\Users\\dell\\Desktop\\CM491\\mvn.txt"
-    svnLog = " >> C:\\Users\\dell\\Desktop\\CM491\\svn.txt"
     cdE = "E: && cd " + p
     addition = " && "
     mvn1 = "mvn release:prepare -Darguments=\"-DskipTests\""
     mvn2 = "mvnrelease:perform -Darguments=\"-Dmaven.javadoc.skip=true\""
     mvn3 = "mvn clean"
-    mvnT1 = "mvn package" + mvnLog
-    svnUptade = "svn update" + svnLog
-    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：测试提交记录\" pom.xml" + svnLog
+    svnUptade = "svn update"
+    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM491)\" pom.xml"
     str1 = cdE + addition + svnUptade + addition + "dir" + addition + mvn3
     str2 = cdE + addition + svnUptade + addition + svnCommit + addition + mvn1 + addition + mvn2 + addition + mvn3
     # shell=True的作用是接收字符串作为指令
