@@ -12,21 +12,15 @@ import subprocess
 import time
 
 
-def zidong():
-    # 获取记录了模块路径的文本 return path
-    getPath()
-    # 对pomlist循环处理,即执行mvn及svn相关命令
-    doMS()
-
-
 # 获取记录了模块路径的文本 path
 def getPath():
     global txtPath
     # txtPath=input('请输入文本绝对路径')
-    txtPath = "C:\\Users\\dell\\Desktop\\CM491\\491.txt"
+    txtPath = "C:\\Users\\dell\\Desktop\\zidong\\dict.txt"
     global linesList
     linesList = fileRead(txtPath)
-    # return txtPath
+    global versionList
+    versionList = []
     # 3.读取pom,删除其中的SNAPSHOT标记
     global absPomList
     absPomList = []  # 一个包含了所有需要执行MS命令的pom的绝对路径list
@@ -41,8 +35,15 @@ def getPath():
 
 # 读文件方法
 def fileRead(fileName):
+    # 字符串消除空行
+    # line=line.strip()
     fread = open(fileName, 'r', encoding="utf-8")  # 一个读
     lines = fread.readlines()  # 按行读取内容
+    strSonar = fileName.split(".")[1]
+    if strSonar != "properties":
+        fread.close()
+        return lines
+    lines = popIndexList(lines)
     fread.close()
     return lines
 
@@ -52,6 +53,12 @@ def fileWrite(fileName, lines):
     fwrite = open(fileName, 'w', encoding="utf-8")  # 一个写
     for line in lines:
         fwrite.write(line)
+    fwrite.close()
+
+
+def fileWritea(fileName, strv):
+    fwrite = open(fileName, 'a', encoding="utf-8")  # 追加写
+    fwrite.write(strv)
     fwrite.close()
 
 
@@ -87,6 +94,8 @@ def sonarEdit(lines):
         if 'SNAPSHOT' in line:
             k = ''.join(lines[index].split())
             version = k[9:-19]
+            v = (linesList[0][:-1].split("\\"))[-2] + '-----' + version + '\n'
+            fileWritea("C:\\Users\\dell\\Desktop\\zidong\\version.txt", v)
     # 为保证文件对应关系不出错,需要对txt文本进行修改,每完成一次MS就删除一行,txt的第一行必然是正在修改的pom
     sonaFile = os.path.join(linesList[0][:-1], "sonar-project.properties")
     sonarLines = fileRead(sonaFile)
@@ -101,16 +110,33 @@ def mavenAndsvn(pomDir):
     svnLog = " >> C:\\Users\\dell\\Desktop\\CM491\\svn.txt"
     cdE = "E: && cd " + p
     addition = " && "
-    mvn1 = "mvn release:prepare -Darguments=\"-DskipTests\"" + mvnLog
-    mvn2 = "release:perform -Darguments=\"-Dmaven.javadoc.skip=true\"" + mvnLog
-    mvn3 = "mvn clean" + mvnLog
+    mvn1 = "mvn release:prepare -Darguments=\"-DskipTests\""
+    mvn2 = "mvnrelease:perform -Darguments=\"-Dmaven.javadoc.skip=true\""
+    mvn3 = "mvn clean"
     mvnT1 = "mvn package" + mvnLog
     svnUptade = "svn update" + svnLog
     svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：测试提交记录\" pom.xml" + svnLog
     str1 = cdE + addition + svnUptade + addition + "dir" + addition + mvn3
+    str2 = cdE + addition + svnUptade + addition + svnCommit + addition + mvn1 + addition + mvn2 + addition + mvn3
     # shell=True的作用是接收字符串作为指令
     p = subprocess.Popen(str1, shell=True)
+    # p = subprocess.Popen(str2, shell=True)
     p.wait()
+
+
+# 文件空行处理
+def popIndexList(lines):
+    newPOMindex = []
+    for index, line in enumerate(lines):
+        if line.expandtabs().replace(' ', '') == '\n':
+            newPOMindex.append(index)
+    newLines = []
+    for line in lines:
+        newLines.append(line)
+    # 对pom的修改
+    for k in newPOMindex:
+        newLines.pop(k - newPOMindex.index(k))  # 元素错行处理
+    return newLines
 
 
 def doMS():
@@ -141,6 +167,13 @@ def doMS():
         str1 = input("如果继续请输入\'1\',如果需要终止,请输入\'0\':")
         if str1 != '1':
             quit()
+
+
+def zidong():
+    # 获取记录了模块路径的文本 return path
+    getPath()
+    # 对pomlist循环处理,即执行mvn及svn相关命令
+    doMS()
 
 
 zidong()
