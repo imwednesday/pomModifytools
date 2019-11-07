@@ -151,7 +151,7 @@ def doWorkPom():
     goEditPom(absPomList, versionDict)
     exceptionLog = f1path + '//' + 'e.log'
     if os.path.isfile(exceptionLog):
-        print('POM HAS MODIFY ALMOST SUCCESSFUL! , PLEASE OPEN e.log')
+        print('POM HAS MODIFY ALMOST SUCCESSFUL! , PLEASE OPEN e.log GET WHAT HAPPEND')
     else:
         print('POM HAS MODIFY SUCCESSFULLY!')
     time.sleep(7)

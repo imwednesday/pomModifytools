@@ -114,7 +114,7 @@ def mavenAndsvn(pomDir):
     svnUptade = "svn update"
     svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM491)\" pom.xml"
     str1 = cdE + addition + svnUptade + addition + "dir" + addition + mvn3
-    str2 = cdE + addition + svnUptade + addition + svnCommit + addition + mvn1 + addition + mvn2 + addition + mvn3
+    str2 = cdE + addition + "dir" + addition + svnUptade + addition + svnCommit + addition + mvn1 + addition + mvn2 + addition + mvn3
     # shell=True的作用是接收字符串作为指令
     p = subprocess.Popen(str1, shell=True)
     # p = subprocess.Popen(str2, shell=True)
