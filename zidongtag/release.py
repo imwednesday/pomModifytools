@@ -48,12 +48,23 @@ def fileRead(fileName):
     return lines
 
 
-# 写文件方法
+# 写文件方法1
 def fileWrite(fileName, lines):
     fwrite = open(fileName, 'w', encoding="utf-8")  # 一个写
     for line in lines:
         fwrite.write(line)
+        time.sleep(0.001)
+    time.sleep(0.1)
     fwrite.close()
+
+# 写文件方法2
+def fileWrite2(fileName, lines):
+    fwrite2 = open(fileName, 'w', encoding="utf-8")  # 一个写
+    for line in lines:
+        fwrite2.write(line)
+        time.sleep(0.001)
+    time.sleep(0.1)
+    fwrite2.close()
 
 
 def fileWritea(fileName, strv):
@@ -100,7 +111,7 @@ def sonarEdit(lines):
     sonaFile = os.path.join(linesList[0][:-1], "sonar-project.properties")
     sonarLines = fileRead(sonaFile)
     sonarLines[5] = sonarLines[5][:-6] + version + '\n'
-    fileWrite(sonaFile, sonarLines)
+    fileWrite2(sonaFile, sonarLines)
 
 
 def mavenAndsvn(pomDir):
@@ -109,15 +120,15 @@ def mavenAndsvn(pomDir):
     cdE = "E: && cd " + p
     addition = " && "
     mvn1 = "mvn release:prepare -Darguments=\"-DskipTests\""
-    mvn2 = "mvnrelease:perform -Darguments=\"-Dmaven.javadoc.skip=true\""
+    mvn2 = "mvn release:perform -Darguments=\"-Dmaven.javadoc.skip=true\""
     mvn3 = "mvn clean"
     svnUptade = "svn update"
-    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM491)\" pom.xml"
+    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM491)\""
     str1 = cdE + addition + svnUptade + addition + "dir" + addition + mvn3
     str2 = cdE + addition + "dir" + addition + svnUptade + addition + svnCommit + addition + mvn1 + addition + mvn2 + addition + mvn3
     # shell=True的作用是接收字符串作为指令
-    p = subprocess.Popen(str1, shell=True)
-    # p = subprocess.Popen(str2, shell=True)
+    # p = subprocess.Popen(str1, shell=True)
+    p = subprocess.Popen(str2, shell=True)
     p.wait()
 
 
@@ -151,9 +162,11 @@ def doMS():
         lines = newPOM[:15] + lines[15:]
         # 对pom的修改
         fileWrite(pom, lines)
+        time.sleep(0.1)
         # 对sonar文件的修改
         sonarEdit(lines)
         # 执行MS命令
+        time.sleep(3)
 
         mavenAndsvn(linesList[0])
         # 对txt的修改
