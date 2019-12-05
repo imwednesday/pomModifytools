@@ -35,7 +35,7 @@ def fileRead(fileName):
 def tagStr():
     tagDict = {}
     moduleName = ""
-    fpath = "C:\\Users\\dell\\Desktop\\zidong\\P4.9.3tags.txt"
+    fpath = "C:\\Users\\dell\\Desktop\\zidong\\tags\\P4.9.3tags.txt"
     lines = fileRead(fpath)
     for line in lines:
         moduleName = line.strip().split("/")[-1][:-6]

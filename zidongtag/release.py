@@ -16,7 +16,7 @@ import time
 def getPath():
     global txtPath
     # txtPath=input('请输入文本绝对路径')
-    txtPath = "C:\\Users\\dell\\Desktop\\zidong\\Pdict.txt"
+    txtPath = "C:\\Users\\dell\\Desktop\\zidong\\release\\Pdict.txt"
     global linesList
     linesList = fileRead(txtPath)
     global versionList
@@ -106,7 +106,7 @@ def sonarEdit(lines):
             k = ''.join(lines[index].split())
             version = k[9:-19]
             v = (linesList[0][:-1].split("\\"))[-2] + '     ' + version + '\n'
-            fileWritea("C:\\Users\\dell\\Desktop\\zidong\\Pversion.txt", v)
+            fileWritea("C:\\Users\\dell\\Desktop\\zidong\\release\\Pversion.txt", v)
     # 为保证文件对应关系不出错,需要对txt文本进行修改,每完成一次MS就删除一行,txt的第一行必然是正在修改的pom
     sonaFile = os.path.join(linesList[0][:-1], "sonar-project.properties")
     sonarLines = fileRead(sonaFile)
