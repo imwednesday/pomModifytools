@@ -22,7 +22,6 @@ def getAbsPom(path):
             for k in dirName:
                 if (k == 'pom.xml'):  # 生成pom的绝对路径
                     absPomList.append(os.path.join(fileAbsName, k))
-
     return absPomList
 
 
@@ -53,19 +52,18 @@ def fileWritea(fileName, strvList):
 def getDependency(absPomList):
     dependencyList = []
     for fileAbsPom in absPomList:
-        ltag = 0
-        dependencyList.append(fileAbsPom)
+        dependencyList1 = []
+        dependencyList1.append(fileAbsPom)
         # 按行读取内容
-        lines = fileRead(fileAbsPom)
+        lines = fileRead(fileAbsPom)[12:]
         for index, line in enumerate(lines):
             if strTag in line:
-                if ltag > 0:
-                    k = ''.join(lines[index - 1].split())
-                    moduleName = k[:-13].split('<artifactId>')[1]
-                    dependencyList.append(moduleName)
-                ltag = ltag + 1
-        dependencyList.append(str(ltag - 1))
-    fileWritea(f1path + "\\dependency.txt", dependencyList)
+                k = ''.join(lines[index - 1].split())
+                moduleName = k[:-13].split('<artifactId>')[1]
+                if moduleName not in dependencyList1:
+                    dependencyList1.append(moduleName)
+        dependencyList1.append(str(len(dependencyList1) - 1))
+        fileWritea(f1path + "\\dependency.txt", dependencyList1)
 
 
 def getPath():
@@ -78,6 +76,7 @@ def getPath():
 
     absPomList = getAbsPom(f1path)
     getDependency(absPomList)
+    print("Congratulations")
 
 
 getPath()
