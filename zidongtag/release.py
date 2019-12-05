@@ -16,7 +16,7 @@ import time
 def getPath():
     global txtPath
     # txtPath=input('请输入文本绝对路径')
-    txtPath = "C:\\Users\\dell\\Desktop\\zidong\\dict.txt"
+    txtPath = "C:\\Users\\dell\\Desktop\\zidong\\Pdict.txt"
     global linesList
     linesList = fileRead(txtPath)
     global versionList
@@ -106,7 +106,7 @@ def sonarEdit(lines):
             k = ''.join(lines[index].split())
             version = k[9:-19]
             v = (linesList[0][:-1].split("\\"))[-2] + '     ' + version + '\n'
-            fileWritea("C:\\Users\\dell\\Desktop\\zidong\\version.txt", v)
+            fileWritea("C:\\Users\\dell\\Desktop\\zidong\\Pversion.txt", v)
     # 为保证文件对应关系不出错,需要对txt文本进行修改,每完成一次MS就删除一行,txt的第一行必然是正在修改的pom
     sonaFile = os.path.join(linesList[0][:-1], "sonar-project.properties")
     sonarLines = fileRead(sonaFile)
@@ -123,13 +123,13 @@ def mavenAndsvn(pomDir):
     mvn2 = "mvn release:perform -Darguments=\"-Dmaven.javadoc.skip=true\""
     mvn3 = "mvn clean"
     svnUptade = "svn update"
-    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM491)\""
+    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM493)\""
     str1 = cdE + addition + svnUptade + addition + "dir" + addition + mvn3
     str2 = cdE + addition + "dir" + addition + svnUptade + addition + svnCommit + addition + mvn1 + addition + mvn2 + addition + mvn3
     # shell=True的作用是接收字符串作为指令
     # p = subprocess.Popen(str1, shell=True)
-    p = subprocess.Popen(str2, shell=True)
-    p.wait()
+    p = subprocess.call(str2, shell=True)
+    # p.wait()
 
 
 # 文件空行处理
@@ -166,7 +166,7 @@ def doMS():
         # 对sonar文件的修改
         sonarEdit(lines)
         # 执行MS命令
-        time.sleep(3)
+        time.sleep(1)
 
         mavenAndsvn(linesList[0])
         # 对txt的修改
