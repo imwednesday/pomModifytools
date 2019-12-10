@@ -14,11 +14,25 @@ import time
 
 # 获取记录了模块路径的文本 path
 def getPath():
+    svTxt = "C:\\Users\\dell\\Desktop\\zidong\\release\\svncopy.txt"
+    svList = fileRead(svTxt)
+    svDict = {}
+    for svl in svList:
+        svDict[svl.strip().split("\\")[-2]] = svl
+
     global txtPath
     # txtPath=input('请输入文本绝对路径')
     txtPath = "C:\\Users\\dell\\Desktop\\zidong\\release\\Pdict.txt"
+    global locLines
+    locLines = []
+    locLines = fileRead(txtPath)
+    loDict = {}
+    for lol in locLines:
+        loDict[lol.strip()] = svDict[lol.strip()]
     global linesList
-    linesList = fileRead(txtPath)
+    linesList = []
+    for k in loDict:
+        linesList.append(loDict[k])
     global versionList
     versionList = []
     # 3.读取pom,删除其中的SNAPSHOT标记
@@ -56,6 +70,7 @@ def fileWrite(fileName, lines):
         time.sleep(0.001)
     time.sleep(0.1)
     fwrite.close()
+
 
 # 写文件方法2
 def fileWrite2(fileName, lines):
@@ -106,7 +121,8 @@ def sonarEdit(lines):
             k = ''.join(lines[index].split())
             version = k[9:-19]
             v = (linesList[0][:-1].split("\\"))[-2] + '     ' + version + '\n'
-            fileWritea("C:\\Users\\dell\\Desktop\\zidong\\release\\Pversion.txt", v)
+            dictTxt = "C:\\Users\\dell\\Desktop\\zidong\\release\\Pversion.txt"
+            fileWritea(dictTxt, v)
     # 为保证文件对应关系不出错,需要对txt文本进行修改,每完成一次MS就删除一行,txt的第一行必然是正在修改的pom
     sonaFile = os.path.join(linesList[0][:-1], "sonar-project.properties")
     sonarLines = fileRead(sonaFile)
@@ -127,7 +143,7 @@ def mavenAndsvn(pomDir):
     str1 = cdE + addition + svnUptade + addition + "dir" + addition + mvn3
     str2 = cdE + addition + "dir" + addition + svnUptade + addition + svnCommit + addition + mvn1 + addition + mvn2 + addition + mvn3
     # shell=True的作用是接收字符串作为指令
-    # p = subprocess.Popen(str1, shell=True)
+    # p = subprocess.call(str1, shell=True)
     p = subprocess.call(str2, shell=True)
     # p.wait()
 
@@ -171,8 +187,8 @@ def doMS():
         mavenAndsvn(linesList[0])
         # 对txt的修改
         del linesList[0]
-        # del absPomList[0]
-        fileWrite(txtPath, linesList)
+        del locLines[0]
+        fileWrite(txtPath, locLines)
 
         str1 = input("如果继续请输入\'1\',如果需要终止,请输入\'0\':")
         if str1 != '1':
