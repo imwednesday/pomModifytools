@@ -69,7 +69,7 @@ def tagStr(dictPom):
             k].replace("trunk", "tags") + "-" + k[-5:]
         moduleName = dictPom[k].split("/")[-1]
         tagDict[moduleName] = svnAddr
-    fpath = "C:\\Users\\dell\\Desktop\\zidong\\tags\\P4.9.3tags.txt"
+    fpath = "C:\\Users\\dell\\Desktop\\zidong\\tags\\P4.9.5tags.txt"
     with open(fpath, 'a+', encoding="utf-8") as fv:  # 写入
         for line in tagDict.values():
             fv.write(line + '\n')

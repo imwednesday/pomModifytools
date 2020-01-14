@@ -139,7 +139,7 @@ def mavenAndsvn(pomDir):
     mvn2 = "mvn release:perform -Darguments=\"-Dmaven.javadoc.skip=true\""
     mvn3 = "mvn clean"
     svnUptade = "svn update"
-    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM493)\""
+    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM495)\""
     str1 = cdE + addition + svnUptade + addition + "dir" + addition + mvn3
     str2 = cdE + addition + "dir" + addition + svnUptade + addition + svnCommit + addition + mvn1 + addition + mvn2 + addition + mvn3
     # shell=True的作用是接收字符串作为指令
