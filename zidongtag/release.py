@@ -4,7 +4,7 @@
 @File    :   release.py
 @Time    :   2019/10/31 17:21:05
 @Author  :   imwednesday 
-@Version :   1.0
+@Version :   1.1
 '''
 
 import os
@@ -14,7 +14,7 @@ import time
 
 # 获取记录了模块路径的文本 path
 def getPath():
-    svTxt = "C:\\Users\\dell\\Desktop\\zidong\\release\\svncopy.txt"
+    svTxt = "D:\\zidong\\release\\svncopy.txt"
     svList = fileRead(svTxt)
     svDict = {}
     for svl in svList:
@@ -22,7 +22,7 @@ def getPath():
 
     global txtPath
     # txtPath=input('请输入文本绝对路径')
-    txtPath = "C:\\Users\\dell\\Desktop\\zidong\\release\\Pdict.txt"
+    txtPath = "D:\\zidong\\release\\Pdict.txt"
     global locLines
     locLines = []
     locLines = fileRead(txtPath)
@@ -121,7 +121,7 @@ def sonarEdit(lines):
             k = ''.join(lines[index].split())
             version = k[9:-19]
             v = (linesList[0][:-1].split("\\"))[-2] + '     ' + version + '\n'
-            dictTxt = "C:\\Users\\dell\\Desktop\\zidong\\release\\Pversion.txt"
+            dictTxt = "D:\\zidong\\release\\Pversion.txt"
             fileWritea(dictTxt, v)
     # 为保证文件对应关系不出错,需要对txt文本进行修改,每完成一次MS就删除一行,txt的第一行必然是正在修改的pom
     sonaFile = os.path.join(linesList[0][:-1], "sonar-project.properties")
@@ -139,13 +139,18 @@ def mavenAndsvn(pomDir):
     mvn2 = "mvn release:perform -Darguments=\"-Dmaven.javadoc.skip=true\""
     mvn3 = "mvn clean"
     svnUptade = "svn update"
-    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM495)\""
+    svnCommit = "svn ci -m " + "\"【问题单号】：无 【简要描述】：修改依赖版本号(CM524)\""
     str1 = cdE + addition + svnUptade + addition + "dir" + addition + mvn3
     str2 = cdE + addition + "dir" + addition + svnUptade + addition + svnCommit + addition + mvn1 + addition + mvn2 + addition + mvn3
     # shell=True的作用是接收字符串作为指令
     # p = subprocess.call(str1, shell=True)
-    p = subprocess.call(str2, shell=True)
-    # p.wait()
+    # p = subprocess.call(str2, shell=True)
+    p = subprocess.Popen(str2, shell=True)
+
+    while p.poll() == 0:
+        break
+    else:
+        p.wait(2)
 
 
 # 文件空行处理
@@ -165,7 +170,8 @@ def popIndexList(lines):
 
 def doMS():
     # 如果本次模块包含3rd,需要先进行一次处理
-    str3rd = input('本次是否包含3rd及parent模块,如果是请输入\'1\',如果不包含,请输入\'0\':')
+    # str3rd = input('本次是否包含3rd及parent模块,如果是请输入\'1\',如果不包含,请输入\'0\':')
+    str3rd = 0
     for pom in absPomList:
         lines = fileRead(pom)
         newPOM = []
@@ -177,13 +183,14 @@ def doMS():
         # 对两个list进行组合,得到最终结果
         lines = newPOM[:15] + lines[15:]
         # 对pom的修改
+        # 加锁试试
+
         fileWrite(pom, lines)
         time.sleep(0.1)
         # 对sonar文件的修改
         sonarEdit(lines)
         # 执行MS命令
         time.sleep(1)
-
         mavenAndsvn(linesList[0])
         # 对txt的修改
         del linesList[0]
